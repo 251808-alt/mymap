@@ -1,1 +1,78 @@
-15499fe53d1598bafed0601edaa7cce7
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>전국 사립 고등학교 지도</title>
+    
+    <!-- Leaflet.js 지도를 띄우기 위한 CSS style 라이브러리를 가져옵니다 -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Leaflet MarkerCluster(마커 묶기) 스타일을 가져옵니다 -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+
+    <style>
+        /* 지도가 화면 전체에 가득 차도록 설정합니다 */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        #map {
+            width: 100%;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 지도가 출력될 영역입니다 -->
+    <div id="map"></div>
+
+    <!-- Leaflet.js 자바스크립트 라이브러리를 로드합니다 -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- MarkerCluster 자바스크립트 라이브러리를 로드합니다 -->
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
+    <script>
+        // 1. 전국 중심(위도 36.45, 경도 127.55)을 기준으로 줌 레벨 7 지도를 만듭니다.
+        var map = L.map('map').setView([36.45, 127.55], 7);
+
+        // 2. OpenStreetMap 배경 지도 타일을 설정합니다.
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        // 3. 마커 클러스터 그룹을 생성하고 지도에 추가합니다.
+        var markers = L.markerClusterGroup();
+
+        // 4. 사립 고등학교 샘플 데이터 목록입니다 (실제 전체 데이터는 파이썬에서 변환하여 넣어줍니다)
+        var schools = [
+            { name: "휘문고등학교", lat: 37.505, lng: 127.061, address: "서울특별시 강남구 역삼로 541" },
+            { name: "상산고등학교", lat: 35.803, lng: 127.128, address: "전북특별자치도 전주시 완산구 거마평로 130" }
+            // ... 나머지 데이터 ...
+        ];
+
+        // 5. 데이터를 반복문으로 돌면서 보라색 동그라미 마커를 만듭니다.
+        schools.forEach(function(school) {
+            var circleMarker = L.circleMarker([school.lat, school.lng], {
+                radius: 4,               // 반지름 크기 4
+                color: 'purple',         // 테두리 보라색
+                fillColor: 'purple',     // 내부 채우기 보라색
+                fillOpacity: 0.7         // 투명도 0.7
+            });
+
+            // 팝업 생성 및 텍스트 바인딩
+            circleMarker.bindPopup("<b>" + school.name + "</b><br>" + school.address);
+
+            // 클러스터에 마커 추가
+            markers.addLayer(circleMarker);
+        });
+
+        // 6. 모든 마커가 담긴 클러스터를 지도에 최종 등록합니다.
+        map.addLayer(markers);
+    </script>
+</body>
+</html>
